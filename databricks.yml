@@ -1,0 +1,47 @@
+# This is a Databricks asset bundle definition for export_data_by_table_with_tags.
+# See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
+bundle:
+  name: export_data_by_table_with_tags
+  uuid: ab85c4d8-d990-4f53-8f02-ea674e731c2e
+
+include:
+  - resources/*.yml
+  - resources/*/*.yml
+
+# Variable declarations. These variables are assigned in the dev/prod targets below.
+variables:
+  catalog:
+    description: The catalog to use
+    default: "samples"
+  schema:
+    description: The schema to use
+    default: "nyctaxi"
+  table:
+    description: The table to export
+    default: "trips"
+  customerTagValue:
+    description: The tag value to apply to the "customer" key for billing
+    default: "dublindata"
+  destination_abfss:
+    description: The ABFSS path to export the data to, e.g. abfss://
+    default: "abfss://anothercontainer@dublindatasolutions.dfs.core.windows.net/exported_data"
+
+targets:
+  dev:
+    # The default target uses 'mode: development' to create a development copy.
+    # - Deployed resources get prefixed with '[dev my_user_name]'
+    # - Any job schedules and triggers are paused by default.
+    # See also https://docs.databricks.com/dev-tools/bundles/deployment-modes.html.
+    mode: development
+    default: true
+    workspace:
+      host: https://adb-3436974546539940.0.azuredatabricks.net
+  prod:
+    mode: production
+    workspace:
+      host: https://adb-3436974546539940.0.azuredatabricks.net
+      # We explicitly deploy to /Workspace/Users/drewfurgiuele@dublindata.net to make sure we only have a single copy.
+      root_path: /Workspace/Users/drewfurgiuele@dublindata.net/.bundle/${bundle.name}/${bundle.target}data
+    permissions:
+      - user_name: drewfurgiuele@dublindata.net
+        level: CAN_MANAGE
