@@ -28,6 +28,11 @@ resources:
         - task_key: notebook_task
           notebook_task:
             notebook_path: ../src/export_delta_data_to_abfss.ipynb
+          libraries:
+            - pypi: 
+                package: datetime
+            - pypi: 
+                package: databricks-sdk
 
       environments:
         - environment_key: default
